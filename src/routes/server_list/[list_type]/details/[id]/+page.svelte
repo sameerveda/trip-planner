@@ -30,7 +30,7 @@
 		const body = editor.getHTML();
 
 		if (title !== data.item?.title || body !== data.item?.body) {
-			await fetch('/api/save_details', {
+			const res = await fetch('/api/save_details', {
 				method: 'POST',
 				body: JSON.stringify({
 					title,
@@ -39,6 +39,8 @@
 					list_type: params.list_type
 				})
 			});
+
+			if (res.status > 299 || res.status < 200) error = true;
 		}
 
 		back();
@@ -48,7 +50,8 @@
 <div class="flex flex-col gap-3 p-4">
 	<small class="text-xs">{params.id}</small>
 	<label class="flex flex-col text-2xl">
-		<span>Title</span> <input type="text" class="caret-black flex-auto border indent-1" bind:value={title} /></label
+		<span>Title</span>
+		<input type="text" class="flex-auto border indent-1 caret-black" bind:value={title} /></label
 	>
 	{#if init}
 		<div class="flex">

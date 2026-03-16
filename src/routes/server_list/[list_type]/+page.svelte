@@ -4,6 +4,11 @@
 
 	const { data, params } = $props();
 	const items = $derived(Object.entries(data.items ?? {}).map(([id, value]) => ({ id, ...value })));
+
+	$effect(() => {
+		if (!data.loggedIn)
+			window.location = `/login?redirect=${encodeURIComponent(location.pathname)}`;
+	});
 </script>
 
 <List items={data.items} title={params.list_type} />

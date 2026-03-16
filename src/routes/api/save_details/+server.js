@@ -1,6 +1,9 @@
 import { time_key, list_id } from '$lib/utils.js';
+import { isLoggedIn } from '$lib/server-utils.js';
 
-export async function POST({ platform, request }) {
+export async function POST({ platform, request, cookies }) {
+	if (!isLoggedIn(platform, cookies)) return new Response('unauthorized', { status: 401 });
+
 	const json = await request.json();
 	const list_type = json.list_type;
 

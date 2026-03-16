@@ -1,5 +1,5 @@
-import { read } from '$app/server';
 
+export const AUTH_KEY = 'AUTH_KEY';
 export const list_id = (list_type, num) => `CBVqwaDe3Fj8LxvqtTE2E_${list_type}_${num}`;
 
 export const time_key = 'DDufrl6fFchtVhhL1c8nk';

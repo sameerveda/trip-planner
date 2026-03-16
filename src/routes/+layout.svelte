@@ -18,7 +18,7 @@
 	<ul class="flex gap-1 p-1">
 		{#each urls as item}
 			<li class="border p-1" class:bg-amber-200={url.startsWith(item.url)}>
-				<a href={item.url}>{item.title}</a>
+				<a href={item.url} onclick={() => location.replace(item.url)}>{item.title}</a>
 			</li>
 		{/each}
 	</ul>

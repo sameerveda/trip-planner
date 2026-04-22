@@ -1,5 +1,5 @@
 <script>
-	import { fileToUrl } from '$lib/utils.js';
+	import { fileToUrl, ITINERARY_KEY } from '$lib/utils.js';
 	import { Tipex } from '@friendofsvelte/tipex';
 
 	const { data, params } = $props();
@@ -30,13 +30,13 @@
 		const body = editor.getHTML();
 
 		if (title !== data.item?.title || body !== data.item?.body) {
-			const res = await fetch('/api/save_details', {
+			const res = await fetch('/api/save_itinerary', {
 				method: 'POST',
 				body: JSON.stringify({
 					title,
 					body,
 					id: params.id,
-					list_type: params.list_type
+					list_type: ITINERARY_KEY
 				})
 			});
 

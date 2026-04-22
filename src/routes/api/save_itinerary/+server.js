@@ -1,18 +1,19 @@
-import { time_key, list_id } from '$lib/utils.js';
-import { isLoggedIn } from '$lib/server-utils.js';
+import { time_key, list_id, ITINERARY_KEY } from '$lib/utils.js';
+import { getKv, getUserId, setContext } from '$lib/server-utils.js';
 
-export async function POST({ platform, request, cookies }) {
-	if (!isLoggedIn(platform, cookies)) return new Response('unauthorized', { status: 401 });
+export async function POST(context) {
+	setContext(context);
 
+	if (!getUserId()) return new Response('unauthorized', { status: 401 });
+
+	const { platform, request } = context;
 	const json = await request.json();
-	const list_type = json.list_type;
 
-	if (!list_type) return new Response('ERROR: list_type is required', { status: 400 });
 	if (!json.id) return new Response('ERROR: id is required', { status: 400 });
 
 	async function updateTitle(key) {
 		try {
-			let items = (await platform.env.KV.get(key, 'json')) ?? {};
+			let items = (await getKv(key, 'json')) ?? {};
 
 			if (items[json.id]?.title === json.title) return true;
 
@@ -29,7 +30,7 @@ export async function POST({ platform, request, cookies }) {
 		}
 	}
 
-	(await updateTitle(list_id(list_type, 1))) || (await updateTitle(list_id(list_type, 2)));
+	(await updateTitle(list_id(ITINERARY_KEY, 1))) || (await updateTitle(list_id(ITINERARY_KEY, 2)));
 	await platform.env.KV.put(json.id, JSON.stringify(json));
 
 	return new Response('ok');

@@ -1,5 +1,6 @@
 <script>
 	import List from '$lib/components/List.svelte';
+	import { ITINERARY_KEY } from '$lib/utils.js';
 	import { nanoid } from 'nanoid';
 
 	const { data, params } = $props();
@@ -11,4 +12,4 @@
 	});
 </script>
 
-<List items={data.items} title={params.list_type} />
+<List items={data.items} title={ITINERARY_KEY} />

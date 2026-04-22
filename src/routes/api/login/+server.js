@@ -1,13 +1,10 @@
-import { authKeys } from '$lib/server-utils.js';
-import { AUTH_KEY } from '$lib/utils.js';
+import { setContext } from '$lib/server-utils.js';
+import { login } from './login.js';
 
-export async function POST({ platform, request, cookies }) {
-	const key = await request.text();
+export async function POST(context) {
+	setContext(context);
 
-	if (authKeys(platform).has(key)) {
-		cookies.set(AUTH_KEY, key, { httpOnly: false, secure: false, path: '/' });
-		return new Response('ok');
-	}
-
-	return new Response('mismatch', { status: 400 });
+	return login(await context.request.text())
+		? new Response('ok')
+		: new Response('mismatch', { status: 400 });
 }

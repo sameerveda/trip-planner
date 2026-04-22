@@ -18,4 +18,4 @@
 	}
 </script>
 
-<BasicTextList {items} {title} {onUpdated} />
+<BasicTextList saveKey={`${params.list_type}-ui-list`} {items} {title} {onUpdated} />

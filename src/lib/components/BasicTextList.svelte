@@ -4,11 +4,32 @@
 	import { onMount } from 'svelte';
 
 	/**
-	 * @type {{items: {title: string, id: string, date: number}[], title: string, addDelay?: boolean, toUrl?: (item: {title: string, id: string}) => string }}
+	 * @type {{saveKey: string, items: {title: string, id: string, date: number}[], title: string, addDelay?: boolean, toUrl?: (item: {title: string, id: string}) => string }}
 	 */
-	const { items, title, onUpdated, addDelay = false, toUrl } = $props();
+	const { saveKey, items, title, onUpdated, addDelay = false, toUrl } = $props();
+
+	const saveKeyState = $derived(`${saveKey}-state`);
+
 	let current = $state('');
 	let waiting = $state(false);
+	let sorted = $state(false);
+	let uniq = $state(true);
+	let initialized = $state(false);
+
+	$effect(() => {
+		if (initialized) localStorage.setItem(saveKeyState, JSON.stringify({ sorted, uniq }));
+	});
+
+	onMount(() => {
+		if (localStorage.getItem(saveKeyState)) {
+			const state = JSON.parse(localStorage.getItem(saveKeyState));
+
+			sorted = state.sorted;
+			uniq = state.uniq;
+		}
+
+		initialized = true;
+	});
 
 	async function wrap(result) {
 		waiting = true;
@@ -24,6 +45,14 @@
 	}
 
 	async function _save() {
+		if (!current?.trim()) return;
+
+		const conflict = items.find(
+			(t) => t.title.replace(/\s+/g, '').toLowerCase() === current.replace(/\s+/g, '').toLowerCase()
+		);
+
+		if (uniq && conflict) return alert(`conflict with: ${JSON.stringify(conflict)}`);
+
 		const item = { title: current, id: nanoid(), date: Date.now() };
 
 		await onUpdated([...items, item], {
@@ -45,6 +74,10 @@
 
 		await onUpdated(items2, { type: 'remove', index, item, oldItems, newItems: items2 });
 	}
+
+	const viewItems = $derived(
+		sorted ? items.toSorted((a, b) => a.title.localeCompare(b.title)) : items
+	);
 </script>
 
 <main class="flex flex-col p-3">
@@ -53,7 +86,15 @@
 	</header>
 
 	<ul>
-		{#each items as item (item.id)}
+		<li style="border-bottom: 1px dotted lightgray;" class="flex gap-2 p-1">
+			<label class="mr-1 flex items-center gap-1">
+				<input type="checkbox" bind:checked={sorted} /> <span>Sorted</span>
+			</label>
+			<label class="mr-1 flex items-center gap-1">
+				<input type="checkbox" bind:checked={uniq} /> <span>Uniq</span>
+			</label>
+		</li>
+		{#each viewItems as item (item.id)}
 			<li style="border-bottom: 1px dotted lightgray;" class="flex p-1">
 				{#if toUrl}
 					<a class="flex-auto" href={toUrl(item)}>{item.title}</a>
@@ -68,7 +109,7 @@
 				>
 			</li>
 		{:else}
-			<li><h3>No {title} Items</h3></li>
+			<li><h3><strong>No Items</strong></h3></li>
 		{/each}
 		<li class="flex gap-1 p-2">
 			<input

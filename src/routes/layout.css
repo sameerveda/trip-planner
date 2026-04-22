@@ -2,3 +2,8 @@
 @plugin '@tailwindcss/typography';
 
 @import '@friendofsvelte/tipex/styles/index.css';
+
+button:disabled,
+input:disabled {
+	filter: grayscale(1) !important;
+}

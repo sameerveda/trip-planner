@@ -6,6 +6,7 @@
 	const url = page.url.pathname;
 
 	const { params, data } = $props();
+	const isAll = $derived(params.list_id === 'all');
 
 	let allItems = $state([]);
 
@@ -25,8 +26,9 @@
 </script>
 
 <BasicTextList
+	saveKey={params.list_id}
 	items={isAll ? $sharedList : allItems}
-	title="Shared List"
+	title={isAll ? 'Shared Lists' : $sharedList.find((t) => t.id === params.list_id)?.title}
 	onUpdated={update}
 	addDelay={true}
 	toUrl={isAll ? toUrl : null}

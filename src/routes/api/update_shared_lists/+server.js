@@ -9,7 +9,7 @@ export async function POST(context) {
 	const userId = getUserId();
 	if (!userId) return new Response('unauthorized', { status: 401 });
 
-	const { type, item, list_id } = await request.json();
+	const { type, item, list_id } = await context.request.json();
 
 	if (!list_id) return new Response('invalid list_id: ' + list_id, { status: 400 });
 

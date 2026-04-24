@@ -4,7 +4,7 @@
 	import { onMount } from 'svelte';
 
 	/**
-	 * @type {{saveKey: string, items: {title: string, id: string, date: number}[], title: string, addDelay?: boolean, toUrl?: (item: {title: string, id: string}) => string }}
+	 * @type {{saveKey: string, items: BasicTextItem[], title: string, addDelay?: boolean, toUrl?: (item: BasicTextItem) => string }}
 	 */
 	const { saveKey, items, title, onUpdated, addDelay = false, toUrl } = $props();
 
